@@ -1,5 +1,7 @@
 package com.example.bitacoras.dominio
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Bitacora(
     val id: Int,
     val sesion: Sesion,

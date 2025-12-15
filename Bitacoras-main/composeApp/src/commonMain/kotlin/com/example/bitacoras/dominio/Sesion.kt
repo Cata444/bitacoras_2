@@ -1,5 +1,7 @@
 package com.example.bitacoras.dominio
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Sesion(
     val id: Int,
     val colaboracion: Colaboracion,
@@ -9,17 +11,17 @@ data class Sesion(
     var fecha: String,
     var horario: String,
     var lugar: String,
-    var estado: Estado = Estado.PENDIENTE
+    var estadoGrupo: EstadoGrupo = EstadoGrupo.PENDIENTE
 ) {
     fun marcarRealizada() {
-        estado = Estado.REALIZADA
+        estadoGrupo = EstadoGrupo.REALIZADA
     }
 
     fun marcarCancelada() {
-        estado = Estado.CANCELADA
+        estadoGrupo = EstadoGrupo.CANCELADA
     }
 
     fun marcarPendiente() {
-        estado = Estado.PENDIENTE
+        estadoGrupo = EstadoGrupo.PENDIENTE
     }
 }

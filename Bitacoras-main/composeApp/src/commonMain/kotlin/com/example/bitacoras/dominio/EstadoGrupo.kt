@@ -1,6 +1,9 @@
 package com.example.bitacoras.dominio
 
-enum class Estado {
+import kotlinx.serialization.Serializable
+
+@Serializable
+enum class EstadoGrupo {
     PENDIENTE,
     REALIZADA,
     CANCELADA

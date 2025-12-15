@@ -7,13 +7,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.bitacoras.dominio.EstadoGrupo
 import com.example.bitacoras.servicios.App
 
-
 @Composable
-fun CrearGrupoPantalla(navController: NavController) {
+fun CrearGrupoPantalla(navController: NavController, grupoId: Int?) {
 
-    var nombreGrupo by remember { mutableStateOf("") }
+    val editando = grupoId != null
+    val grupo = remember(grupoId) { grupoId?.let { App.grupoServicio.buscarPorId(it) } }
+
+    var nombreGrupo by remember { mutableStateOf(grupo?.nombre ?: "") }
+    var estadoGrupo by remember { mutableStateOf(grupo?.estado ?: EstadoGrupo.PENDIENTE) }
     var error by remember { mutableStateOf("") }
 
     Column(
@@ -25,7 +29,7 @@ fun CrearGrupoPantalla(navController: NavController) {
     ) {
 
         Text(
-            text = "Crear / Editar Grupo",
+            text = if (editando) "Editar Grupo" else "Crear Grupo",
             style = MaterialTheme.typography.headlineSmall
         )
 
@@ -40,25 +44,67 @@ fun CrearGrupoPantalla(navController: NavController) {
             isError = error.isNotEmpty()
         )
 
-        if (error.isNotEmpty()) {
-            Text(
-                text = error,
-                color = MaterialTheme.colorScheme.error
+        Text("Estado", style = MaterialTheme.typography.titleSmall)
+
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+
+            FilterChip(
+                selected = estadoGrupo == EstadoGrupo.PENDIENTE,
+                onClick = { estadoGrupo = EstadoGrupo.PENDIENTE },
+                label = { Text("Pendiente") }
+            )
+
+            FilterChip(
+                selected = estadoGrupo == EstadoGrupo.REALIZADA,
+                onClick = { estadoGrupo = EstadoGrupo.REALIZADA },
+                label = { Text("Realizada") }
+            )
+
+            FilterChip(
+                selected = estadoGrupo == EstadoGrupo.CANCELADA,
+                onClick = { estadoGrupo = EstadoGrupo.CANCELADA },
+                label = { Text("Cancelada") }
             )
         }
 
-        Button(
-            onClick = {
-                if (nombreGrupo.isBlank()) {
-                    error = "El nombre no puede estar vacío"
-                } else {
-                    App.grupoServicio.crearGrupo(nombreGrupo)
-                    navController.popBackStack()   // Volver atrás
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
+        if (error.isNotEmpty()) {
+            Text(text = error, color = MaterialTheme.colorScheme.error)
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text("Guardar")
+            OutlinedButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.weight(1f)
+            ) { Text("Cancelar") }
+
+            Button(
+                onClick = {
+                    try {
+                        if (nombreGrupo.isBlank()) {
+                            error = "El nombre no puede estar vacío"
+                            return@Button
+                        }
+
+                        if (editando) {
+                            App.grupoServicio.editarGrupo(
+                                id = grupoId!!,
+                                nuevoNombre = nombreGrupo,
+                                nuevoEstado = estadoGrupo
+                            )
+                        } else {
+                            App.grupoServicio.crearGrupo(nombreGrupo, estadoGrupo)
+                        }
+
+                        navController.popBackStack()
+                    } catch (e: IllegalArgumentException) {
+                        error = e.message ?: "Error"
+                    }
+                },
+                modifier = Modifier.weight(1f)
+            ) { Text("Guardar") }
         }
     }
 }

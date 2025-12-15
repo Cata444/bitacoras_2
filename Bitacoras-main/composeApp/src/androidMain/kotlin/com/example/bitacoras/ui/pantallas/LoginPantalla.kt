@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bitacoras.servicios.App
+import com.example.bitacoras.servicios.SesionUsuario
 import com.example.bitacoras.ui.navegacion.Rutas
 
 @Composable
@@ -67,7 +68,12 @@ fun LoginPantalla(navController: NavController) {
                 val usuario = App.usuarioServicio.login(correo, contrasena)
 
                 if (usuario != null) {
-                    navController.navigate(Rutas.Inicio.ruta)
+                    // ✅ GUARDAR SESIÓN
+                    SesionUsuario.guardarSesion(usuario.id)
+
+                    navController.navigate(Rutas.Inicio.ruta) {
+                        popUpTo(Rutas.Login.ruta) { inclusive = true }
+                    }
                 } else {
                     error = "Credenciales incorrectas"
                 }
@@ -75,6 +81,14 @@ fun LoginPantalla(navController: NavController) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Ingresar")
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        TextButton(
+            onClick = { navController.navigate(Rutas.Registro.ruta) }
+        ) {
+            Text("Crear cuenta")
         }
     }
 }

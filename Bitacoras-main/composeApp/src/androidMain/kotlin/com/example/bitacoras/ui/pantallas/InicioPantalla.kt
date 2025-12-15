@@ -1,14 +1,13 @@
 package com.example.bitacoras.ui.pantallas
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.bitacoras.servicios.SesionUsuario
 import com.example.bitacoras.ui.navegacion.Rutas
 
 @Composable
@@ -52,6 +51,21 @@ fun InicioPantalla(navController: NavController) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Bitácoras")
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // 🔴 CERRAR SESIÓN
+        OutlinedButton(
+            onClick = {
+                SesionUsuario.cerrarSesion()
+                navController.navigate(Rutas.Login.ruta) {
+                    popUpTo(Rutas.Inicio.ruta) { inclusive = true }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Cerrar sesión")
         }
     }
 }

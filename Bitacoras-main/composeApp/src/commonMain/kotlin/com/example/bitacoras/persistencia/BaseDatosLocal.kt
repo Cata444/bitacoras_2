@@ -2,33 +2,38 @@ package com.example.bitacoras.persistencia
 
 import com.example.bitacoras.dominio.*
 
-/*
-* CAMBIAR LUEGO ESTO ES PARA LA PRUEBA
-* */
-
 object BaseDatosLocal {
 
-    private var ultimoId = 1
-    fun generarId(): Int = ultimoId++
+    // ===== ID GLOBAL =====
+    private var ultimoId: Int = Storage.loadUltimoId()
 
-    // ==== USUARIOS ====
-    val usuarios = mutableListOf(
-        Usuario(
-            id = generarId(),
-            nombre = "Admin",
-            correo = "admin@mail.com",
-            contrasena = "1234",
-            telefono = "999999999",
-            disponibilidad = "Disponible"
-        )
-    )
+    fun generarId(): Int {
+        val id = ultimoId
+        ultimoId++
+        Storage.saveUltimoId(ultimoId)
+        return id
+    }
 
-    // ==== GRUPOS ====
-    val grupos = mutableListOf<Grupo>()
+    // ===== CARGA DESDE STORAGE =====
+    val usuarios: MutableList<Usuario> = Storage.loadUsuarios()
+    val grupos: MutableList<Grupo> = Storage.loadGrupos()
+    val sesiones: MutableList<Sesion> = Storage.loadSesiones()
+    val bitacoras: MutableList<Bitacora> = Storage.loadBitacoras()
 
-    // ==== SESIONES ====
-    val sesiones = mutableListOf<Sesion>()
-
-    // ==== BITÁCORAS ====
-    val bitacoras = mutableListOf<Bitacora>()
+    init {
+        // Crear admin SOLO si no existe (primera vez)
+        if (usuarios.none { it.correo == "admin@mail.com" }) {
+            usuarios.add(
+                Usuario(
+                    id = generarId(),
+                    nombre = "Admin",
+                    correo = "admin@mail.com",
+                    contrasena = "1234",
+                    telefono = "999999999",
+                    disponibilidad = "Disponible"
+                )
+            )
+            Storage.saveUsuarios(usuarios)
+        }
+    }
 }

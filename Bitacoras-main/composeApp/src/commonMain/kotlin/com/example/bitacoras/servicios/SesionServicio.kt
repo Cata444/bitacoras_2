@@ -24,7 +24,7 @@ class SesionServicio(
             grupo = grupo,
             inicio = fecha,
             termino = fecha,
-            estado = Estado.PENDIENTE,
+            estadoGrupo = EstadoGrupo.PENDIENTE,
             asignatura = actividad
         )
 
@@ -37,7 +37,7 @@ class SesionServicio(
             fecha = fecha,
             horario = horario,
             lugar = lugar,
-            estado = Estado.PENDIENTE
+            estadoGrupo = EstadoGrupo.PENDIENTE
         )
 
         sesionesRepo.crear(sesion)
@@ -52,8 +52,8 @@ class SesionServicio(
         return sesionesRepo.buscarPorGrupo(grupoId)
     }
 
-    fun cambiarEstado(id: Int, nuevoEstado: Estado) {
+    fun cambiarEstado(id: Int, nuevoEstadoGrupo: EstadoGrupo) {
         val sesion = sesionesRepo.buscarPorId(id)
-        sesion?.estado = nuevoEstado
+        sesion?.estadoGrupo = nuevoEstadoGrupo
     }
 }

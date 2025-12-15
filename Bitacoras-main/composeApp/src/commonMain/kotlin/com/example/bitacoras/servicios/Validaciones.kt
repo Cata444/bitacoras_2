@@ -2,13 +2,48 @@ package com.example.bitacoras.servicios
 
 object Validaciones {
 
-    // fecha en formato dd/mm/yyyy y rango de años
+    /* =========================================================
+       👤 VALIDACIONES DE USUARIO
+       ========================================================= */
+
+    // 🧍 Nombre (mínimo 3 caracteres)
+    fun nombreValido(nombre: String): Boolean {
+        return nombre.trim().length >= 3
+    }
+
+    // 📧 Correo electrónico (formato estándar)
+    fun correoValido(correo: String): Boolean {
+        return Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
+            .matches(correo.trim())
+    }
+
+    // 📱 Teléfono: solo números, 8 a 12 dígitos
+    fun telefonoValido(telefono: String): Boolean {
+        return telefono.all { it.isDigit() } &&
+                telefono.length in 8..12
+    }
+
+    // 🔐 Contraseña:
+    // - mínimo 6 caracteres
+    // - al menos una letra
+    // - al menos un número
+    fun contrasenaValida(contrasena: String): Boolean {
+        return contrasena.length >= 6 &&
+                contrasena.any { it.isLetter() } &&
+                contrasena.any { it.isDigit() }
+    }
+
+    /* =========================================================
+       📅 VALIDACIONES DE FECHA
+       ========================================================= */
+
+    // Fecha en formato dd/mm/yyyy con rango de años
     fun esFechaValida(
         fecha: String,
         anioMin: Int = 2020,
         anioMax: Int = 2035
     ): Boolean {
-        // Formato básico
+
         val regex = Regex("""\d{2}/\d{2}/\d{4}""")
         if (!regex.matches(fecha)) return false
 
@@ -27,16 +62,18 @@ object Validaciones {
             else -> return false
         }
 
-        if (dia !in 1..diasMes) return false
-
-        return true
+        return dia in 1..diasMes
     }
 
     private fun esBisiesto(anio: Int): Boolean {
         return (anio % 4 == 0 && anio % 100 != 0) || (anio % 400 == 0)
     }
 
-    // hora en formato HH:MM 24 hrs
+    /* =========================================================
+       ⏰ VALIDACIONES DE HORA
+       ========================================================= */
+
+    // Hora en formato HH:MM (24 horas)
     fun esHoraValida(hora: String): Boolean {
         val regex = Regex("""\d{2}:\d{2}""")
         if (!regex.matches(hora)) return false
@@ -45,9 +82,6 @@ object Validaciones {
         val h = partes.getOrNull(0)?.toIntOrNull() ?: return false
         val m = partes.getOrNull(1)?.toIntOrNull() ?: return false
 
-        if (h !in 0..23) return false
-        if (m !in 0..59) return false
-
-        return true
+        return h in 0..23 && m in 0..59
     }
 }

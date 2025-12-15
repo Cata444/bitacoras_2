@@ -1,13 +1,19 @@
 package com.example.bitacoras.dominio
 
-class Tutoria(
-    id: Int,
-    carrera: String,
-    grupo: Grupo,
-    inicio: String,
-    termino: String,
-    estado: Estado = Estado.PENDIENTE
-) : Colaboracion(id, carrera, grupo, inicio, termino, estado) {
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+@SerialName("Tutoria")
+data class Tutoria(
+    override val id: Int,
+    override val carrera: String,
+    override val grupo: Grupo,
+    override val inicio: String,
+    override val termino: String,
+    override val estadoGrupo: EstadoGrupo = EstadoGrupo.PENDIENTE,
+    val tema: String
+) : Colaboracion() {
 
     override fun tipoColaboracion(): String = "Tutoría"
 }
